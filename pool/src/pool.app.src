@@ -1,0 +1,9 @@
+{application,pool,
+             [{vsn,"1.0"},
+              {description,"pool to work with limited resources"},
+              {id,"pool"},
+              {registered,[]},
+              {applications,[kernel,stdlib,lager]},
+              {mod,{pool_app,[]}},
+              {env,[]},
+              {included_applications,[]}]}.
