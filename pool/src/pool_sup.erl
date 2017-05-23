@@ -17,7 +17,13 @@ init([]) ->
 
     SupFlags = {RestartStrategy, MaxRestarts, MaxSecondsBetweenRestarts},
 
-    {ok, {SupFlags, [{worker_sup, {worker_sup, start_link, []},
-                      permanent, infinity, supervisor, [worker_sup]},
-                     {pool, {pool, start_link, []},
-                      permanent, infinity, worker, [pool]}]}}.
+    Children = [
+                 %% Worker Supervisor
+                {worker_sup, {worker_sup, start_link, []},
+                 permanent, infinity, supervisor, [worker_sup]},
+                %% Pool Server
+                {pool, {pool, start_link, []},
+                 permanent, 1000, worker, [pool]}
+               ],
+                
+    {ok, {SupFlags, Children}}.

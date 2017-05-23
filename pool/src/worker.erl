@@ -2,7 +2,7 @@
 
 -behaviour(gen_server).
 
--export([start_link/1]).
+-export([start_link/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -10,23 +10,23 @@
 
 -define(SERVER, ?MODULE).
 
--record(state, {duration}).
+-record(state, {name, duration}).
 
-start_link(Duration) ->
-    gen_server:start_link({local, ?SERVER}, ?MODULE, [Duration], []).
+start_link(Name, Duration) ->
+    gen_server:start_link({local, Name}, ?MODULE, [Name, Duration], []).
 
-init([Duration]) ->
-    gen_server:cast(?SERVER, startup),
-    {ok, #state{duration = Duration}}.
+init([Name, Duration]) ->
+    gen_server:cast(Name, startup),
+    {ok, #state{name = Name, duration = Duration}}.
 
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
-handle_cast(startup, #state{duration = Duration} = State) ->
+handle_cast(startup, #state{name = Name, duration = Duration} = State) ->
     %% simulates it is doing some stuff
     timer:sleep(Duration),
     %% terminates itself
-    {stop, normal, State};
+    {stop, {shutdown, {Name, Duration}}, State};
 
 handle_cast(_Msg, State) ->
     {noreply, State}.
